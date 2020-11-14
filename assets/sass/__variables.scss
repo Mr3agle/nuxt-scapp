@@ -1,0 +1,22 @@
+@import 'element-variables.scss';
+@import url('https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,100;0,200;0,300;0,400;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,600;1,700;1,800;1,900&family=Questrial&family=Quicksand:wght@300;400;500;600;700&display=swap');
+/*
+font-family: 'Overpass', sans-serif;
+font-family: 'Questrial', sans-serif;
+font-family: 'Quicksand', sans-serif;
+*/
+$red: #ff00c8;
+$primary: $--color-primary;
+$success: $--color-success;
+$warning: $--color-warning;
+$danger: $--color-danger;
+$info: $--color-info;
+$black: #000000;
+$dark:  #2b2b2b;
+$gray:  #adadad;
+$pale: #F2F6FC;
+$white: #ffffff;
+
+$overpass: 'Overpass', sans-serif;
+$questrial: 'Questrial', sans-serif;
+$quicksand: 'Quicksand', sans-serif;
