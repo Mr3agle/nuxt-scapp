@@ -57,16 +57,9 @@
             </el-form-item>
 
             <el-form-item style="margin-top: 2rem">
-              <!-- <el-button
-                type="primary"
-                @click="submitForm('loginData')"
-                icon="el-icon-lock"
-                :loading="loading"
-                >Ingresar</el-button
-              > -->
               <el-button
                 type="primary"
-                @click="userLogin()"
+                @click="submitForm('loginData')"
                 icon="el-icon-lock"
                 :loading="loading"
                 >Ingresar</el-button
@@ -82,7 +75,6 @@
               <el-button type="text"> regístrate aquí. </el-button>
             </nuxt-link>
           </div>
-          <!-- {{ errors }} -->
         </el-col>
       </el-row>
     </div>
@@ -90,7 +82,6 @@
 </template>
 
 <script>
-// import { mapGetters } from "vuex";
 export default {
   layout: "auth",
   head: {
@@ -100,8 +91,8 @@ export default {
     var validatePass = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("Ingresa tu contraseña"));
-        // } else if (this.errors.password || this.errors.password === null) {
-        //   callback(new Error("Asegúrate de que tu contraseña es correcta"));
+      } else if (this.errors) {
+        callback(new Error("Asegúrate de que tu contraseña es correcta"));
       } else {
         callback();
       }
@@ -109,16 +100,17 @@ export default {
     var validateUser = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("Ingresa un nombre de usuario o email"));
-        // } else if (this.errors.username || this.errors.username === null) {
-        //   callback(new Error("¿Seguro que ese es tu usuario?"));
-        // } else if (this.errors.email || this.errors.email === null) {
-        //   callback(new Error("Oft, no pudimos encontrar ese email"));
+      } else if (this.errors) {
+        callback(new Error("¿Seguro que ese es tu usuario?"));
+      } else if (this.errors) {
+        callback(new Error("Oft, no pudimos encontrar esa dirección"));
       } else {
         callback();
       }
     };
     return {
       loading: false,
+      errors: null,
       loginData: {
         user: "",
         pass: "",
@@ -130,106 +122,90 @@ export default {
     };
   },
   methods: {
-    // submitForm(formName) {
-    //   this.$refs[formName].validate((valid) => {
-    //     if (valid) {
-    //       this.loading = true;
-    //       this.$notify.success({
-    //         title: "Gracias",
-    //         message: "Estamos validando tus datos",
-    //       });
-    //       setTimeout(() => {
-    //         this.login();
-    //       }, 1000);
-    //     } else {
-    //       this.$notify.error({
-    //         title: "Error",
-    //         message: "Revise sus datos e intente de nuevo.",
-    //       });
-    //       setTimeout(() => {
-    //         this.login();
-    //       }, 1000);
-    //       this.loading = false;
-    //       console.log("error submit!!");
-    //       return false;
-    //     }
-    //   });
-    // },
+    submitForm(formName) {
+      this.loading = true;
+
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.loading = true;
+          this.userLogin()
+            .then((result) => {
+              this.$notify.success({
+                title: `Hola, ${this.$auth.user.name}`,
+                message: this.randomGreeting(this.$auth.user.gender),
+              });
+              this.loading = false;
+
+              this.$router.push("/");
+            })
+            .catch((err) => {
+              this.$notify.error({
+                title: "!Oops!",
+                message: "No pudimos encontrar esta cuenta",
+              });
+              this.loading = false;
+            });
+        } else {
+          setTimeout(() => {
+            this.$notify.error({
+              title: "Oh-oh",
+              message: "Revisa tus datos e intenta de nuevo.",
+            });
+            this.loading = false;
+          }, 1000);
+
+          // console.log(this.errors);
+          return false;
+        }
+      });
+    },
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },
-    // ...mapActions("auth", ["loginRequest"]),
     async userLogin() {
-      this.loading = true;
       const credentials = {
         username: this.loginData.user,
         password: this.loginData.pass,
       };
 
-      try {
-        this.loading = true;
-
-        let response = await this.$auth.loginWith("local", {
-          data: credentials,
-        });
-
-        this.loading = false;
-
-        // this.$auth.$storage.setUniversal(key, val, isJson)
-        // this.$auth.$storage.setUniversal("token", response.data.token);
-        this.$auth.$storage.setUniversal("token", response.data.token, false);
-        this.$auth.$storage.setUniversal("authorized", true, false);
-        this.$auth.$storage.setUniversal("user", response.data.user, true);
-        this.$router.push("/");
-      } catch (err) {
-        console.log(err);
-      }
-    },
-
-    async login() {
-      // this.$store
-      //   .dispatch("user/loginRequest", {
-      //     username: this.loginData.user,
-      //     password: this.loginData.pass,
-      //   })
-      //   .then((response) => {
-      //     console.log("You are in as: ");
-      //     console.log(response);
-      //   })
-      //   .catch((errors) => {
-      //     console.log(errors);
-      //   });
-      const credentials = {
-        username: this.loginData.user,
-        password: this.loginData.pass,
-      };
-      console.log({ data: credentials });
       await this.$auth
-        .loginWith("local", { data: credentials })
-        .then(() => console.log("Logged In!"))
-        .catch((err) => {
-          // this.$toast.danger("There was a problem");
-          console.log(err);
-        });
+        .loginWith("local", {
+          data: credentials,
+        })
+        .then((response) => {
+          // this.$auth.$storage.setUniversal("token", response.data.token, false);
+          this.$auth.$storage.setUniversal("authorized", true, false);
+          this.$auth.$storage.setUniversal("user", response.data.user, true);
 
-      // this.loginRequest()
-      //   .then((response) => {
-      //     console.log("Ya estás dentro");
-      //   })
-      //   .catch((errors) => {
-      //     console.log(errors);
-      //   });
-      // console.log(this.loginData);
-      // this.$auth.loginWith("laravel.passport");
+          this.loading = false;
+        })
+        .catch((err) => {
+          this.errors = response.err;
+          // console.log(err);
+        });
+    },
+    randomGreeting(gender) {
+      let welcome;
+      let welcome2;
+      if (gender == "male" || gender == "other") {
+        welcome = "Bienvenido ";
+        welcome2 = "Listo ";
+      } else {
+        welcome = "Bienvenida ";
+        welcome2 = "Lista ";
+      }
+
+      const greetings = [
+        "Nos alegra verte por aquí",
+        "Qué bueno que estás de vuelta",
+        welcome + "de nuevo",
+        welcome2 + "para comprar?",
+      ];
+      const rand = Math.floor(Math.random() * greetings.length);
+
+      return greetings[rand];
     },
   },
-  // computed: {
-  //   // ...mapGetters(["errors"]),
-  //   ...mapState("auth", ["loggedIn", "user"]),
-  // },
-  // mounted() {
-  //   // this.$store.commit("setErrors", {});
-  // },
 };
 </script>
 
