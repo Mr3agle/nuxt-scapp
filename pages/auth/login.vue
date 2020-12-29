@@ -11,7 +11,7 @@
       <el-row>
         <el-col :span="24">
           <div class="logo-client-auth">
-            <img src="@/assets/images/logo/SC-logo.svg" alt="Simpol Commerce" />
+            <img src="@/assets/images/logo/SC-blue.svg" alt="Simpol Commerce" />
           </div>
         </el-col>
       </el-row>
@@ -64,9 +64,9 @@
                 :loading="loading"
                 >Ingresar</el-button
               >
-              <el-button @click="resetForm('loginData')" icon="el-icon-delete"
+              <!-- <el-button @click="resetForm('loginData')" icon="el-icon-delete"
                 >Borrar</el-button
-              >
+              > -->
             </el-form-item>
           </el-form>
           <div>
@@ -159,9 +159,9 @@ export default {
         }
       });
     },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
-    },
+    // resetForm(formName) {
+    //   this.$refs[formName].resetFields();
+    // },
     async userLogin() {
       const credentials = {
         username: this.loginData.user,
@@ -227,7 +227,7 @@ export default {
   }
 }
 .auth-form {
-  background-color: $pale;
+  background-color: $white;
   padding: 3rem 1rem 3rem 1rem;
   border: solid 1px darken($pale, 5);
   box-shadow: 0 25px 35px darken($pale, 5);

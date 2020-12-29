@@ -12,11 +12,11 @@
     </el-alert>
     <el-header class="client-nav shadow-sm rounded-b">
       <el-row type="flex" align="middle">
-        <el-col :span="6">
+        <el-col :span="8">
           <div class="logo-container">
             <nuxt-link to="/">
               <img
-                src="@/assets/images/logo/SC-logo.svg"
+                src="@/assets/images/logo/SC-blue.svg"
                 alt="Simpol Commerce Logo"
               />
             </nuxt-link>
@@ -29,7 +29,7 @@
                 <nuxt-link to="#" class="client-nav-item">Acerca de</nuxt-link>
                 <nuxt-link to="#" class="client-nav-item">Productos</nuxt-link>
                 <nuxt-link to="#" class="client-nav-item">Ofertas</nuxt-link>
-                <SimpolCart />
+                <SimpolCart v-if="miniCart"> </SimpolCart>
               </div>
             </el-col>
             <el-col :span="1"></el-col>
@@ -54,15 +54,25 @@
           <el-dropdown>
             <a href="#" class="sc-link">
               <div class="block d-flex align-center">
-                <el-avatar :size="40" :src="circleUrl"></el-avatar>
+                <div class="block">
+                  <el-avatar :size="40" :src="circleUrl"></el-avatar>
+                </div>
                 <span class="text-bold ml-2">Hola, {{ $auth.user.name }} </span>
               </div>
             </a>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item icon="el-icon-user"> Perfil</el-dropdown-item>
+              <a href="/admin">
+                <el-dropdown-item
+                  icon="el-icon-menu"
+                  v-if="$auth.user.role === 'admin'"
+                >
+                  Dashboard
+                </el-dropdown-item>
+              </a>
               <el-dropdown-item icon="el-icon-document-copy">
-                Órdenes</el-dropdown-item
-              >
+                Órdenes
+              </el-dropdown-item>
               <span @click="logout">
                 <el-dropdown-item icon="el-icon-back" divided>
                   Salir
@@ -106,7 +116,7 @@
   </el-container>
 </template>
 <script>
-import { mapGetters, mapActions } from "vuex";
+// import { mapGetters, mapActions } from "vuex";
 export default {
   data() {
     return {
@@ -117,15 +127,18 @@ export default {
       dashboard: null,
       loggedIn: false,
       verified: true,
+      mainLogo: "/nuxt/assets/images/logo/SC-isologo-new.svg",
+      miniCart: true,
     };
-  },
-  computed: {
-    // ...mapGetters("auth", ["user"]),
   },
   mounted() {
     this.$auth.$storage.syncUniversal("token");
     this.$auth.$storage.syncUniversal("authorized");
     this.$auth.$storage.syncUniversal("user");
+
+    if (this.$route.params === "cart") {
+      this.miniCart = false;
+    }
 
     if (this.$auth.$storage.getUniversal("authorized")) {
       this.loggedIn = true;
@@ -141,7 +154,6 @@ export default {
     // console.log(this.$router.currentRoute.name);
   },
   methods: {
-    // ...mapActions("auth", ["sendLogOutRequest", "userDataRequest"]),
     async logout() {
       try {
         this.loggedIn = false;
@@ -191,7 +203,7 @@ export default {
   height: auto !important;
 }
 .logo-container {
-  width: 80%;
+  width: 50%;
   margin: auto;
   img {
     width: 100%;
@@ -218,8 +230,8 @@ export default {
   height: auto !important;
   font-family: $questrial;
   padding: 0.7rem;
-  position: absolute;
-  bottom: 0;
+  // position: absolute;
+  // bottom: 0;
   width: 100%;
 }
 .sc-copyright {

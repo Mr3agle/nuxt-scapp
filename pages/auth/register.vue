@@ -11,7 +11,7 @@
       <el-row>
         <el-col :span="24">
           <div class="logo-client-auth-register">
-            <img src="@/assets/images/logo/SC-logo.svg" alt="Simpol Commerce" />
+            <img src="@/assets/images/logo/SC-blue.svg" alt="Simpol Commerce" />
           </div>
         </el-col>
       </el-row>

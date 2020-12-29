@@ -1,17 +1,19 @@
 <template>
-  <div class="container">
-    <SimpolCarousel />
-    <div
-      class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 justify-content-start"
-    >
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm">
+        <el-button type="primary">
+          <i class="el-icon-plus"></i> Crear Producto</el-button
+        >
+      </div>
+    </div>
+    <div class="row justify-content-start">
       <div
         class="col-sm d-flex align-items-center justify-content-center my-2"
         v-for="(product, i) in featuredProducts"
         :key="i"
       >
-        <SimpolProductCard
-          :rating="product.value"
-          :colors="colors"
+        <SimpolCardAdmin
           :name="product.name"
           :price="product.price"
           :specialPrice="product.specialPrice"
@@ -20,32 +22,21 @@
         />
       </div>
     </div>
-    <!-- <div class="featured-products">
-      <div class="" v-for="(product, i) in featuredProducts" :key="i">
-        <SimpolProductCard
-          :rating="product.value"
-          :colors="colors"
-          :name="product.name"
-          :price="product.price"
-          :specialPrice="product.specialPrice"
-          :img="product.img"
-        />
-      </div>
-    </div> -->
   </div>
 </template>
 
 <script>
 export default {
+  layout: "admin",
   data() {
     return {
-      colors: ["#99A9BF", "#FFB700", "#FFB700"],
       featuredProducts: [
         {
-          value: 4.5,
           name: "Saco Mollie",
-          price: 30.0,
-          specialPrice: 25.0,
+          stock: "20",
+          price: 20.0,
+          specialPrice: 5,
+
           img:
             "https://images.unsplash.com/photo-1516762689617-e1cffcef479d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=654&q=80",
           desc: "Saco Mollie de alta Calidad",
@@ -86,21 +77,62 @@ export default {
           desc: "Short primaveral jean 100% ecuatoriano.",
         },
       ],
+      tableData: [
+        {
+          date: "2016-05-03",
+          name: "Tom",
+          img:
+            "https://images.unsplash.com/photo-1516762689617-e1cffcef479d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=654&q=80",
+          address: "No. 189, Grove St, Los Angeles",
+        },
+        {
+          date: "2016-05-02",
+          name: "John",
+          img:
+            "https://images.unsplash.com/photo-1516762689617-e1cffcef479d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=654&q=80",
+          address: "No. 189, Grove St, Los Angeles",
+        },
+        {
+          date: "2016-05-04",
+          name: "Morgan",
+          img:
+            "https://images.unsplash.com/photo-1516762689617-e1cffcef479d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=654&q=80",
+          address: "No. 189, Grove St, Los Angeles",
+        },
+        {
+          date: "2016-05-01",
+          name: "Jessy",
+          img:
+            "https://images.unsplash.com/photo-1516762689617-e1cffcef479d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=654&q=80",
+          address: "No. 189, Grove St, Los Angeles",
+        },
+      ],
+      search: "",
     };
   },
-  mounted() {
-    // console.log("Api URL:" + process.env.apiUrl);
+  methods: {
+    handleEdit(index, row) {
+      console.log(index, row);
+    },
+    handleDelete(index, row) {
+      console.log(index, row);
+    },
+    searchProduct() {
+      this.tableData.filter(
+        (data) =>
+          !search || data.name.toLowerCase().includes(search.toLowerCase())
+      );
+    },
   },
 };
 </script>
 
-<style lang="scss">
-// .container {
-//   margin: auto;
-//   width: 80%;
-//   background-color: red;
-//   display: flex;
-//   justify-content: space-between;
-//   align-items: center;
-// }
+<style lang="scss" scoped>
+.bordered {
+  border: solid 1px $blush-pale;
+}
+.table-img {
+  // width: 75px;
+  // height: auto;
+}
 </style>

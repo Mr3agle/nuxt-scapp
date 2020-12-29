@@ -12,7 +12,13 @@
         :body-style="{ padding: '0px' }"
       >
         <div class="product-img rounded">
-          <img :src="img" class="image" />
+          <!-- <img :src="img" class="thumbnail" /> -->
+          <el-avatar
+            shape="square"
+            :size="100"
+            fit="cover"
+            :src="img"
+          ></el-avatar>
         </div>
         <div style="padding: 1rem; margin-top: 1rem" class="text-center">
           <el-rate
@@ -48,7 +54,9 @@
             <!-- <el-button plain size="mini" class="button"
               ><i class="el-icon-view icon-lg"></i
             ></el-button> -->
-            <ProductModal :productData="productData" />
+            <el-button plain size="mini" class="button" @click="open"
+              ><i class="el-icon-view icon-lg"></i>
+            </el-button>
             <!-- {{ productData }} -->
             <el-button type="primary" size="mini" class="button"
               ><i class="el-icon-sell icon-lg"></i
@@ -57,6 +65,87 @@
         </div>
       </el-card>
     </a>
+    <el-dialog
+      :visible.sync="centerDialogVisible"
+      width="50%"
+      center
+      class="blur-bg"
+      custom-class="rounded modal"
+    >
+      <el-row type="flex" align="middle" justify="center">
+        <el-col>
+          <div class="quick-view-img">
+            <img :src="productData.img" :alt="productData.name" />
+          </div>
+        </el-col>
+        <el-col>
+          <el-row class="mb-2">
+            <el-col class="mb-2">
+              <h1 class="modal-name">
+                {{ productData.name }}
+              </h1>
+            </el-col>
+            <el-col class="mb-2">
+              <el-rate
+                :colors="colors"
+                v-model="rating"
+                disabled
+                show-score
+                text-color="#FFB700"
+                score-template="{value}"
+              >
+              </el-rate>
+            </el-col>
+            <el-col class="mb-2">
+              <p class="modal-description">
+                {{ productData.desc }}
+              </p>
+            </el-col>
+            <el-col class="mb-2">
+              <span
+                class="modal-price"
+                :class="{ 'modal-striked text-gray': productData.specialPrice }"
+              >
+                $ {{ getPrice(productData.price) }}
+              </span>
+              <br />
+              <span v-if="productData.specialPrice" class="modal-special">
+                ${{ getPrice(productData.specialPrice) }}
+              </span>
+            </el-col>
+            <el-col class="mb-2">
+              <el-input-number
+                v-model="qty"
+                :min="1"
+                :max="5"
+                size="mini"
+              ></el-input-number>
+            </el-col>
+          </el-row>
+
+          <el-row type="flex" :gutter="15" class="modal-footer">
+            <el-col class="text-right">
+              <el-button
+                @click="centerDialogVisible = false"
+                icon="el-icon-view"
+              >
+                Ver Producto
+              </el-button>
+            </el-col>
+            <el-col class="text-right">
+              <el-button
+                type="primary"
+                @click="centerDialogVisible = false"
+                icon="el-icon-sell"
+              >
+                Añadir a la bolsa
+              </el-button>
+            </el-col>
+          </el-row>
+        </el-col>
+      </el-row>
+    </el-dialog>
+    <!-- <ProductModal :productData="productData" :openModal="open" /> -->
   </div>
 </template>
 
@@ -82,10 +171,15 @@ export default {
     img: {
       type: String,
     },
+    desc: {
+      type: String,
+    },
   },
   data() {
     return {
       value: this.rating,
+      centerDialogVisible: false,
+      qty: 1,
       productData: {
         rating: this.rating,
         name: this.name,
@@ -93,12 +187,16 @@ export default {
         price: this.price,
         specialPrice: this.specialPrice,
         img: this.img,
+        desc: this.desc,
       },
     };
   },
   methods: {
     getPrice(v) {
       return v.toFixed(2);
+    },
+    open() {
+      this.centerDialogVisible = true;
     },
   },
 };
@@ -152,5 +250,51 @@ export default {
 }
 .card-width {
   width: 250px;
+}
+.quick-view-img {
+  text-align: center;
+  img {
+    border-radius: 15px;
+    width: 90%;
+    max-width: 300px;
+  }
+}
+
+.blur-bg {
+  backdrop-filter: blur(7px) !important;
+  background-color: rgba($color: #000000, $alpha: 0.5) !important;
+}
+.modal {
+  position: relative;
+  // width: 100%;
+  // background-color: red;
+}
+.modal-name {
+  color: $black;
+  font-family: $questrial;
+  font-size: 2rem !important;
+}
+.modal-price {
+  color: $black;
+  font-weight: bold;
+  font-family: $overpass;
+  font-size: 1.7rem;
+}
+.modal-special {
+  font-weight: bold;
+  font-family: $overpass;
+  color: $black;
+  font-size: 1.7rem;
+}
+.modal-striked {
+  text-decoration: line-through;
+  // color: rgba($danger, 0.5);
+  font-size: 1rem;
+}
+.modal-footer {
+  position: absolute;
+  // width: 50%;
+  bottom: 0;
+  right: 0;
 }
 </style>
